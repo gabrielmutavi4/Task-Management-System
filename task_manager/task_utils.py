@@ -4,61 +4,74 @@ from .validation import (
     validate_due_date
 )
 
-tasks = []
+import json
 
-# Task structure:
-# {"title": "", "description": "", "due_date": "", "completed": False}
+# ---------- SAVE TASKS ----------
+def save_tasks(tasks):
+    with open("tasks.json", "w") as file:
+        json.dump(tasks, file, indent=4)
 
-def add_task(title, description, due_date):
-    if not validate_task_title(title):
-        print("Invalid title")
-        return
 
-    if not validate_task_description(description):
-        print("Invalid description")
-        return
+# ---------- LOAD TASKS ----------
+def load_tasks():
+    try:
+        with open("tasks.json", "r") as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return []
 
-    if not validate_due_date(due_date):
-        print("Invalid due date format (YYYY-MM-DD)")
-        return
 
-    task = {
-        "title": title,
-        "description": description,
-        "due_date": due_date,
-        "completed": False
-    }
-
+# ---------- ADD TASK ----------
+def add_task(tasks, task):
     tasks.append(task)
+    save_tasks(tasks)
     print("Task added successfully!")
 
 
-def mark_task_as_complete(index):
+# ---------- MARK COMPLETE ----------
+def mark_task_as_complete(tasks, index):
     if 0 <= index < len(tasks):
         tasks[index]["completed"] = True
+        save_tasks(tasks)
         print("Task marked as complete!")
     else:
         print("Invalid task index")
 
 
-def view_pending_tasks():
+# ---------- DELETE TASK ----------
+def delete_task(tasks, index):
+    if 0 <= index < len(tasks):
+        tasks.pop(index)
+        save_tasks(tasks)
+        print("Task deleted successfully!")
+    else:
+        print("Invalid task index")
+
+
+# ---------- VIEW PENDING ----------
+def view_pending_tasks(tasks):
     pending = [t for t in tasks if not t["completed"]]
 
     if not pending:
         print("No pending tasks")
         return
 
-    for i, task in enumerate(pending, 1):
-        print(f"{i}. {task['title']} - {task['due_date']}")
+    for task in pending:
+        print(f"{task['title']} - {task['due_date']}")
 
 
-def calculate_progress():
-    if not tasks:
-        print("No tasks available")
-        return
+# ---------- PROGRESS ----------
+def calculate_progress(tasks):
+    if len(tasks) == 0:
+        print(0)
+        return 0
 
-    completed = sum(1 for t in tasks if t["completed"])
-    total = len(tasks)
+    completed = 0
 
-    progress = (completed / total) * 100
-    print(f"Progress: {progress:.2f}% ({completed}/{total})")
+    for task in tasks:
+        if task.get("completed") == True:
+            completed += 1
+
+    progress = (completed / len(tasks)) * 100
+    print(progress)
+    return progress

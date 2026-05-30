@@ -1,47 +1,83 @@
 from task_manager.task_utils import (
+    load_tasks,
     add_task,
     mark_task_as_complete,
+    delete_task,
     view_pending_tasks,
-    calculate_progress,
-    tasks
+    calculate_progress
 )
 
-def menu():
-    while True:
-        print("\n===== TASK MANAGER =====")
-        print("1. Add Task")
-        print("2. Mark Task as Complete")
-        print("3. View Pending Tasks")
-        print("4. View Progress")
-        print("5. Exit")
+from task_manager.validation import (
+    validate_task_title,
+    validate_task_description,
+    validate_due_date
+)
 
-        choice = input("Choose option: ")
+tasks = load_tasks()
 
-        if choice == "1":
+
+while True:
+    print("\n===== TASK MANAGER =====")
+    print("1. Add Task")
+    print("2. Mark Task Complete")
+    print("3. View Pending Tasks")
+    print("4. Delete Task")
+    print("5. Show Progress")
+    print("6. Exit")
+
+    choice = input("Enter choice: ")
+
+    # ---------- ADD TASK ----------
+    if choice == "1":
+        try:
             title = input("Title: ")
-            desc = input("Description: ")
-            due = input("Due date (YYYY-MM-DD): ")
-            add_task(title, desc, due)
+            description = input("Description: ")
+            due_date = input("Due date: ")
 
-        elif choice == "2":
-            for i, t in enumerate(tasks):
-                status = "✔" if t["completed"] else "❌"
-                print(f"{i}. {t['title']} [{status}]")
+            validate_task_title(title)
+            validate_task_description(description)
+            validate_due_date(due_date)
 
-            index = int(input("Enter task index: "))
-            mark_task_as_complete(index)
+            task = {
+                "title": title,
+                "description": description,
+                "due_date": due_date,
+                "completed": False
+            }
 
-        elif choice == "3":
-            view_pending_tasks()
+            add_task(tasks, task)
 
-        elif choice == "4":
-            calculate_progress()
+        except ValueError as e:
+            print("Error:", e)
 
-        elif choice == "5":
-            print("Goodbye!")
-            break
 
-        else:
-            print("Invalid option")
+    # ---------- COMPLETE TASK ----------
+    elif choice == "2":
+        index = int(input("Enter task index: "))
+        mark_task_as_complete(tasks, index)
 
-menu()
+
+    # ---------- VIEW PENDING ----------
+    elif choice == "3":
+        view_pending_tasks(tasks)
+
+
+    # ---------- DELETE TASK ----------
+    elif choice == "4":
+        index = int(input("Enter task index: "))
+        delete_task(tasks, index)
+
+
+    # ---------- PROGRESS ----------
+    elif choice == "5":
+        calculate_progress(tasks)
+
+
+    # ---------- EXIT ----------
+    elif choice == "6":
+        print("Goodbye!")
+        break
+
+
+    else:
+        print("Invalid choice")
