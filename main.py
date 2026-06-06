@@ -21,9 +21,8 @@ while True:
     print("1. Add Task")
     print("2. Mark Task Complete")
     print("3. View Pending Tasks")
-    print("4. Delete Task")
-    print("5. Show Progress")
-    print("6. Exit")
+    print("4. Show Progress")
+    print("5. Exit")
 
     choice = input("Enter choice: ")
 
@@ -53,7 +52,7 @@ while True:
 
     # ---------- COMPLETE TASK ----------
     elif choice == "2":
-        index = int(input("Enter task index: "))
+        index = int(input("Enter task index: ")) - 1
         mark_task_as_complete(tasks, index)
 
 
@@ -64,13 +63,13 @@ while True:
 
     # ---------- DELETE TASK ----------
     elif choice == "4":
-        index = int(input("Enter task index: "))
-        delete_task(tasks, index)
+        print(calculate_progress(tasks))
 
 
     # ---------- PROGRESS ----------
     elif choice == "5":
-        calculate_progress(tasks)
+        print("Goodbye!")
+        break
 
 
     # ---------- EXIT ----------

@@ -63,15 +63,13 @@ def view_pending_tasks(tasks):
 # ---------- PROGRESS ----------
 def calculate_progress(tasks):
     if len(tasks) == 0:
-        print(0)
         return 0
 
     completed = 0
 
     for task in tasks:
-        if task.get("completed") == True:
+        if task["completed"]:
             completed += 1
 
     progress = (completed / len(tasks)) * 100
-    print(progress)
     return progress

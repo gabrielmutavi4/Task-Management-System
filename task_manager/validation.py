@@ -12,7 +12,15 @@ def validate_task_description(description):
     return True
 
 
+from datetime import datetime
+
 def validate_due_date(due_date):
     if len(due_date.strip()) == 0:
         raise ValueError("Due date cannot be empty")
+
+    try:
+        datetime.strptime(due_date, "%Y-%m-%d")
+    except ValueError:
+        raise ValueError("Date must be YYYY-MM-DD")
+
     return True
